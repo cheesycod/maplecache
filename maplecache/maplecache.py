@@ -138,7 +138,7 @@ class Cache():
             return cached_data.borrow()
         return None
     
-    def set(self, key: str, value: Any, *, expiry: Optional[int | float] = None, **kwargs) -> Any:
+    def set(self, key: str, value: Any, *, expiry: Optional[int | float] = None, deepcopy: bool = False) -> Any:
         """Sets a value in the cache"""
         if isinstance(value, CacheValue):
             raise TypeError("Value must not be of type CacheValue")
@@ -149,9 +149,8 @@ class Cache():
         self._cache[key] = CacheValue(
             self,
             key,
-            copy.deepcopy(value) if not kwargs.get("deepcopy") else value,
+            copy.deepcopy(value) if not deepcopy else value,
             expiry=(time.time() + expiry) if expiry else None,
-            **kwargs
         )    
 
     def entries(self):
