@@ -151,4 +151,8 @@ class Cache():
             value,
             expiry=(time.time() + expiry) if expiry else None,
             **kwargs
-        )
+        )    
+
+    def entries(self):
+        """Returns all entries in the cache"""
+        return self._cache.items()
