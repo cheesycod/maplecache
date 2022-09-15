@@ -1,6 +1,7 @@
 from typing import Any, Optional
 import asyncio
 import time
+import copy
 
 class CacheValue():
     """
@@ -148,7 +149,7 @@ class Cache():
         self._cache[key] = CacheValue(
             self,
             key,
-            value,
+            copy.deepcopy(value) if not kwargs.get("deepcopy") else value,
             expiry=(time.time() + expiry) if expiry else None,
             **kwargs
         )    
