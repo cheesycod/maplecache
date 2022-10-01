@@ -48,10 +48,16 @@ class CacheValue():
     def edit(self, value: Any, *, expiry: Optional[int | float] = None):
         """Edit the value and expiry"""
         self._val = value
+        
         if expiry:
-            self.expiry = expiry
             self.cleanup.cancel()
-        self.cleanup = asyncio.create_task(self._clear_cache())
+        else:
+            self.cleanup.cancel()
+        
+        self.expiry = expiry or 0
+        
+        if expiry:
+            self.cleanup = asyncio.create_task(self._clear_cache())
 
 class BorrowedCacheValue():
     """
