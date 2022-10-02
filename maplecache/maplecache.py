@@ -18,6 +18,8 @@ class CacheValue():
         # Start task to clear from cache when expired
         if expiry:
             self.cleanup = asyncio.create_task(self._clear_cache())
+        else:
+            self.cleanup = None
 
     async def _clear_cache(self):
         """Clears the cache"""
@@ -42,16 +44,17 @@ class CacheValue():
     def remove(self):
         """Removes this cache"""
         self._val = None
-        self.cleanup.cancel()
+        if self.cleanup:
+            self.cleanup.cancel()
         self.expiry = 0
     
     def edit(self, value: Any, *, expiry: Optional[int | float] = None):
         """Edit the value and expiry"""
         self._val = value
         
-        if expiry:
+        if expiry and self.cleanup:
             self.cleanup.cancel()
-        else:
+        elif self.cleanup:
             self.cleanup.cancel()
         
         self.expiry = expiry or 0
